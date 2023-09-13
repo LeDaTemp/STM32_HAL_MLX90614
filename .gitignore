@@ -50,3 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Manually added
+.settings/
+Debug/
+Drivers/
+MLX90614_example Debug.launch
+*.ld
