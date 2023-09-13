@@ -55,5 +55,5 @@ dkms.conf
 .settings/
 Debug/
 Drivers/
-MLX90614_example Debug.launch
 *.ld
+*.launch

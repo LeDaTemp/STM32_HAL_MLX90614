@@ -53,19 +53,12 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
-uint8_t Buffer[25] = {0};
-uint8_t Space[] = " - ";
-uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-uint8_t EndMSG[] = "Done! \r\n\r\n";
-
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static uint8_t address = 0x5A;
+
 /* USER CODE END 0 */
 
 /**
@@ -101,10 +94,6 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-  uint8_t ret = 0;
-
-  HAL_Delay(1000);
-
   MLX90614 sensor;
   sensor.address = 0x5A;
   sensor.interface = &hi2c1;
@@ -112,45 +101,13 @@ int main(void)
   sensor.power_gpio_pin = GPIO_PIN_6;
 
   if(MLX90614_init(&sensor) != HAL_OK) printf("Can't connect!\r\n");
-//  address = address << 1;
-//  ret = HAL_I2C_IsDeviceReady(&hi2c1, address, 3, 5);
-//  if(ret != HAL_OK) printf("Can`t connect, error: %d\r\n", ret);
-//
-  uint8_t word[2];
 
-  for(int i = 0; i <= 0x1F; i++){
-	  uint16_t test = MLX90614_readEEPROM(&sensor, i);
-	  printf("%d\t %d\r\n", i, test);
-	  HAL_Delay(10);
-  }
-
-//  HAL_UART_Transmit(&hlpuart1, Buffer, sizeof(Buffer), 10000);
-//  HAL_UART_Transmit(&hlpuart1, EndMSG, sizeof(EndMSG), 10000);
-
-//  uint8_t i = 0;
-//  HAL_Delay(1000);
-//	/*-[ I2C Bus Scanning ]-*/
-//	HAL_UART_Transmit(&hlpuart1, StartMSG, sizeof(StartMSG), 10000);
-//	for(i=1; i<128; i++)
-//		{
-//		ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5);
-//		if (ret != HAL_OK) /* No ACK Received At That Address */
-//		{
-//			HAL_UART_Transmit(&hlpuart1, Space, sizeof(Space), 10000);
-//		}
-//		else if(ret == HAL_OK)
-//		{
-//			sprintf(Buffer, "0x%X", i);
-//			HAL_UART_Transmit(&hlpuart1, Buffer, sizeof(Buffer), 10000);
-//		}
-//	}
-//	HAL_UART_Transmit(&hlpuart1, EndMSG, sizeof(EndMSG), 10000);
-  	/*--[ Scanning Done ]--*/
 
   MLX90614_writeEEPROM(&sensor, MLX90614_EEPROM_I2C_ADDRESS, 0x005A);
 
   int test = MLX90614_readEEPROM(&sensor, MLX90614_EEPROM_I2C_ADDRESS);
   printf("%d\r\n", test);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -242,7 +199,6 @@ PUTCHAR_PROTOTYPE
 
   return ch;
 }
-
 /* USER CODE END 4 */
 
 /**
