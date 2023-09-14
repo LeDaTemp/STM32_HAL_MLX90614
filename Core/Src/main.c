@@ -94,19 +94,19 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-  MLX90614 sensor;
-  sensor.address = 0x5A;
-  sensor.interface = &hi2c1;
-  sensor.power_gpio = GPIOC;
-  sensor.power_gpio_pin = GPIO_PIN_6;
+  MLX90614 sensor[1];
+  sensor->address = 0x5A;
+  sensor->interface = &hi2c1;
+  sensor->power_gpio = GPIOC;
+  sensor->power_gpio_pin = GPIO_PIN_6;
 
-  if(MLX90614_init(&sensor) != HAL_OK) printf("Can't connect!\r\n");
+  if(MLX90614_init(sensor) != HAL_OK) printf("Can't connect!\r\n");
 
 
-  MLX90614_writeEEPROM(&sensor, MLX90614_EEPROM_I2C_ADDRESS, 0x005A);
+  MLX90614_writeEEPROM(sensor, MLX90614_EEPROM_I2C_ADDRESS, 0x005A);
 
-  int test = MLX90614_readEEPROM(&sensor, MLX90614_EEPROM_I2C_ADDRESS);
-  printf("%d\r\n", test);
+  int newAddress = MLX90614_readEEPROM(sensor, MLX90614_EEPROM_I2C_ADDRESS);
+  printf("New address: %X\r\n", newAddress);
 
   /* USER CODE END 2 */
 
@@ -114,9 +114,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  float t_a;
-	  MLX90614_readAmbientTemperature(&sensor, &t_a);
-	  printf("%f\r\n", t_a);
+	  float t_a, t_obj;
+	  MLX90614_readAmbientTemperature(sensor, &t_a);
+	  MLX90614_readObjTemperature(sensor, &t_obj, MLX90614_OBJ1);
+	  printf("t_a: %f\t t_obj: %f\r\n", t_a, t_obj);
 	  HAL_Delay(500);
     /* USER CODE END WHILE */
 
