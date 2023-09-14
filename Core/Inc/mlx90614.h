@@ -46,12 +46,20 @@ enum MLX90614_EEPROM{
 	MLX90614_EEPROM_ID_4 = 0x1F
 };
 
+enum MLC90614_OBJ{
+	MLX90614_OBJ1,
+	MLX90614_OBJ2
+};
 
 uint8_t MLX90614_init(MLX90614* sensor_obj);
+void MLX90614_restart(MLX90614* sensor_obj);
 
-void MLX90614_readAmbientTemperature(MLX90614* sensor_obj, float* data);
 uint16_t MLX90614_readEEPROM(MLX90614* sensor_obj, uint8_t reg);
 uint8_t MLX90614_writeEEPROM(MLX90614* sensor_obj, uint8_t reg, uint16_t value);
+void MLX90614_readRAM(MLX90614* sensor_obj, uint8_t reg, uint8_t* data);
+void MLX90614_tunitToDegreeC(uint8_t* bytes, float* temperature);
+void MLX90614_readAmbientTemperature(MLX90614* sensor_obj, float* data);
+void MLX90614_readObjTemperature(MLX90614* sensor_obj, float* data, uint8_t obj_nr);
 
 #ifdef __cplusplus
 }

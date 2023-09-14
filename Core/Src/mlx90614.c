@@ -121,14 +121,52 @@ uint8_t MLX90614_writeEEPROM(MLX90614* sensor_obj, uint8_t reg, uint16_t value){
 }
 
 /**
+  * @brief Read a 16-bit value from the MLX90614's RAM.
+  * @param sensor_obj Pointer to the MLX90614 object.
+  * @param reg Register address in the RAM.
+  * @param data Pointer to a buffer to store the read data (LSB first).
+  */
+void MLX90614_readRAM(MLX90614* sensor_obj, uint8_t reg, uint8_t* data){
+	HAL_I2C_Mem_Read(sensor_obj->interface,
+			sensor_obj->address_internal,
+			reg,
+			1,
+			data,
+			2,
+			10);
+}
+
+/**
+  * @brief Convert a temperature value in T-unit to degrees Celsius.
+  * @param bytes Pointer to a buffer containing the T-unit temperature data (LSB first).
+  * @param temperature Pointer to a variable to store the temperature in degrees Celsius.
+  */
+void MLX90614_tunitToDegreeC(uint8_t* bytes, float* temperature){
+	*temperature = ((uint16_t)bytes[1]<<8|bytes[0])*0.02f-273.15f;
+}
+
+/**
   * @brief Read the ambient temperature from the MLX90614 sensor.
   * @param sensor_obj Pointer to the MLX90614 object.
   * @param data Pointer to a variable to store the temperature in degrees Celsius.
   */
 void MLX90614_readAmbientTemperature(MLX90614* sensor_obj, float* data){
 	// Read the ambient temperature from the sensor and convert it to degrees Celsius
-	uint8_t result[2];
-	HAL_I2C_Mem_Read(sensor_obj->interface, sensor_obj->address_internal, MLX90614_RAM_T_AMBIENT, 1, result, 2, 10);
-	*data = ((uint16_t)result[1]<<8|result[0])*0.02f-273.15f;
+	uint8_t bytes[2];
+	MLX90614_readRAM(sensor_obj, MLX90614_RAM_T_AMBIENT, bytes);
+	MLX90614_tunitToDegreeC(bytes, data);
 }
 
+/**
+  * @brief Read the object temperature from the MLX90614 sensor.
+  * @param sensor_obj Pointer to the MLX90614 object.
+  * @param data Pointer to a variable to store the temperature in degrees Celsius.
+  * @param object number MLX90614_OBJx
+  */
+void MLX90614_readObjTemperature(MLX90614* sensor_obj, float* data, uint8_t obj_nr){
+	uint8_t bytes[2];
+	MLX90614_readRAM(sensor_obj,
+			(obj_nr == MLX90614_OBJ1) ? MLX90614_RAM_T_OBJ_1 : MLX90614_RAM_T_OBJ_2,
+			bytes);
+	MLX90614_tunitToDegreeC(bytes, data);
+}
