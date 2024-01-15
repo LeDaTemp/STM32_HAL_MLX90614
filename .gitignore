@@ -54,6 +54,4 @@ dkms.conf
 # Manually added
 .settings/
 Debug/
-Drivers/
-*.ld
 *.launch
